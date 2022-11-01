@@ -14,13 +14,14 @@ function NavigationBar({ children }) {
           <NavbarBrand href="/">Rebrick Cataloger</NavbarBrand>
           <Nav pills>
             <NavItem>
-              <NavLink href="/login/">Login</NavLink>
+              <NavLink href="/search/">Search</NavLink>
             </NavItem>
-            <NavItem>
+            {/*  <NavItem>
               <NavLink href="/signup">Signup</NavLink>
-            </NavItem>
+            </NavItem>{' '}
+            */}
+            <AuthButton />
           </Nav>
-          <AuthButton />
           {/* <NavbarText>Simple Text</NavbarText> */}
         </Navbar>
       </header>

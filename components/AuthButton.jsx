@@ -1,5 +1,13 @@
 import { useRouter } from 'next/router';
-import { useAuth } from '../context/AuthContext';
+import styled from 'styled-components';
+import { Spinner, Input, InputGroup, Button } from 'reactstrap';
+import { useAuth } from './AuthContext';
+
+const Username = styled.p`
+  padding: 0px 10px;
+  font-size: small;
+  color: grey;
+`;
 
 const AuthButton = (props) => {
   const { user, logOut } = useAuth();
@@ -12,10 +20,10 @@ const AuthButton = (props) => {
 
   return (
     <>
-      <button onClick={handleClick} {...props}>
+      <Button onClick={handleClick} size="sm" {...props}>
         {user.uid ? 'Sign Out' : 'Sign In'}
-      </button>
-      <p>{user.uid ? user.email : null} </p>
+      </Button>
+      <Username>{user.uid ? user.email : null} </Username>
     </>
   );
 };

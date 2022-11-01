@@ -3,8 +3,11 @@ import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useQuery } from 'react-query';
-import styles from '../styles/Home.module.css';
+import { useMemo, useState } from 'react';
+import { Spinner, Input, InputGroup, Button } from 'reactstrap';
 import styled from 'styled-components';
+import { atom, useAtom } from 'jotai';
+import { useHydrateAtoms } from 'jotai/utils';
 import {
   collection,
   getDocs,
@@ -12,8 +15,14 @@ import {
   limit,
   enableMultiTabIndexedDbPersistence,
 } from 'firebase/firestore';
-import { db } from '../lib/firebase';
-import PartCard from '../components/PartCard/PartCard';
+import { db } from '../logic/firebase';
+import PartCard from '../components/PartCard';
+
+const Grid = styled.section`
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-gap: 2px;
+`;
 
 const getPartCatalog = async () => {
   const q = query(collection(db, 'bricklink_list_parts'), limit(500));
@@ -26,55 +35,59 @@ const getPartCatalog = async () => {
   return partCatalog;
 };
 
+const partCatalogAtom = atom([]);
+
 export async function getServerSideProps() {
   return {
     props: {
       initialPartCatalog: await getPartCatalog(),
     },
-    // revalidate: 1200,
   };
 }
 
 export default function Home({ initialPartCatalog }) {
-  const Grid = styled.section`
-    display: grid;
-    grid-template-columns: repeat(10, 1fr);
-    grid-gap: 2px;
-  `;
+  useHydrateAtoms([[partCatalogAtom, initialPartCatalog]]);
+  const [partCatalog] = useAtom(partCatalogAtom);
+  // const {
+  //   isLoading,
+  //   isError,
+  //   data: partCatalog,
+  //   error,
+  // } = useQuery('partCatalog', getPartCatalog, {
+  //   initialData: initialPartCatalog,
+  // });
 
-  const {
-    isLoading,
-    isError,
-    data: partCatalog,
-    error,
-  } = useQuery('partCatalog', getPartCatalog, {
-    initialData: initialPartCatalog,
-  });
+  const [searchFilter, setSearchFilter] = useState('');
+  const [selectedPartNum, setSelectedPartNum] = useState('');
 
-  if (isLoading) {
-    return <span>Loading...</span>;
-  }
+  const filteredPartCatalog = useMemo(() => {
+    const lowercaseFilter = searchFilter.toLowerCase();
+    return partCatalog.filter((part) => {
+      return part.name.toLowerCase().includes(lowercaseFilter);
+    });
+  }, [partCatalog, searchFilter]);
 
-  if (isError) {
-    return <span>Error: {error.message}</span>;
-  }
+  const onSearchSubmit = (e) => {
+    if (e.key === 'Enter') {
+      setSearchFilter(e.target.value);
+    }
+  };
+
+  // _ _ _ COMPONENT UI _ _ _ _ _ _ _ _ _ _ _ _
+
+  // if (isLoading) {
+  //   return <Spinner>Loading...</Spinner>;
+  // }
+  // if (isError) {
+  //   return <span>Error: {error.message}</span>;
+  // }
 
   return (
-    <ProtectedRoute>
+    <>
       <Head>
         <title>Rebrick Catalog</title>
       </Head>
-
-      <Grid>
-        {partCatalog.map((part) => (
-          <PartCard
-            key={part.partNum}
-            name={part.name}
-            partNum={part.partNum}
-            imageUrl={part.thumbnailUrl}
-          ></PartCard>
-        ))}
-      </Grid>
-    </ProtectedRoute>
+      <h1>Main Page</h1>
+    </>
   );
 }

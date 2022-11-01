@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/globals.css';
 import NavigationBar from '../components/NavigationBar';
-import { AuthContextProvider } from '../context/AuthContext';
+import { AuthContextProvider } from '../components/AuthContext';
 
 const queryClient = new QueryClient();
 

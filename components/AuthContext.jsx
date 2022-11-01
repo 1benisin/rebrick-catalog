@@ -6,7 +6,7 @@ import {
 } from 'firebase/auth';
 import { useRouter } from 'next/router';
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { auth } from '../lib/firebase';
+import { auth } from '../logic/firebase';
 
 const AuthContext = createContext({});
 
