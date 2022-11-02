@@ -1,35 +1,26 @@
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { useState } from 'react';
+import styled from 'styled-components';
+import { Stack, Form, Button, Alert } from 'react-bootstrap';
 
 import { useAuth } from '../components/AuthContext';
 
-import {
-  Alert,
-  Button,
-  Col,
-  Container,
-  Form,
-  FormGroup,
-  Input,
-  Label,
-  Row,
-} from 'reactstrap';
-
-const SignupPage = () => {
+export default function SignupPage() {
   const [email, setEmail] = useState('');
   const [passwordOne, setPasswordOne] = useState('');
   const [passwordTwo, setPasswordTwo] = useState('');
   const router = useRouter();
-  //Optional error handling
   const [error, setError] = useState(null);
 
   const { signUp } = useAuth();
 
   const onSubmit = (event) => {
+    event.preventDefault();
     setError(null);
     if (passwordOne === passwordTwo)
       signUp(email, passwordOne)
-        .then((authUser) => {
+        .then(() => {
           console.log('Success. The user is created in firebase');
           router.push('/');
         })
@@ -37,76 +28,49 @@ const SignupPage = () => {
           setError(error.message);
         });
     else setError('Password do not match');
-    event.preventDefault();
   };
 
   return (
-    <Container className="text-center" style={{ padding: '40px 0px' }}>
-      <Row>
-        <h2>Signup</h2>
-      </Row>
-      <Row>
-        <Col>
-          <Form
-            style={{ maxWidth: '400px', margin: 'auto' }}
-            onSubmit={onSubmit}
-          >
-            {error && <Alert color="danger">{error}</Alert>}
-            <FormGroup row>
-              <Label for="signUpEmail" sm={4}>
-                Email
-              </Label>
-              <Col sm={8}>
-                <Input
-                  type="email"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  name="email"
-                  id="signUpEmail"
-                  placeholder="Email"
-                />
-              </Col>
-            </FormGroup>
-            <FormGroup row>
-              <Label for="signUpPassword" sm={4}>
-                Password
-              </Label>
-              <Col sm={8}>
-                <Input
-                  type="password"
-                  name="passwordOne"
-                  value={passwordOne}
-                  onChange={(event) => setPasswordOne(event.target.value)}
-                  id="signUpPassword"
-                  placeholder="Password"
-                />
-              </Col>
-            </FormGroup>
-            <FormGroup row>
-              <Label for="signUpPassword2" sm={4}>
-                Confirm Password
-              </Label>
-              <Col sm={8}>
-                <Input
-                  type="password"
-                  name="password"
-                  value={passwordTwo}
-                  onChange={(event) => setPasswordTwo(event.target.value)}
-                  id="signUpPassword2"
-                  placeholder="Password"
-                />
-              </Col>
-            </FormGroup>
-            <FormGroup row>
-              <Col>
-                <Button>Sign Up</Button>
-              </Col>
-            </FormGroup>
-          </Form>
-        </Col>
-      </Row>
-    </Container>
+    <>
+      <Column>
+        <h2>Sign Up</h2>
+        {error && <Alert variant="danger">{error}</Alert>}
+        <Form onSubmit={onSubmit}>
+          <Stack gap={3}>
+            <Form.Control
+              type="email"
+              placeholder="Email"
+              onChange={(event) => setEmail(event.target.value)}
+            />
+            <Form.Control
+              type="password"
+              placeholder="Password"
+              onChange={(event) => setPasswordOne(event.target.value)}
+            />
+            <Form.Control
+              type="password"
+              placeholder="Confirm Password"
+              onChange={(event) => setPasswordTwo(event.target.value)}
+            />
+            <Button variant="primary" type="submit">
+              Sign up
+            </Button>
+            <Form.Text>
+              Have account? <Link href="/login">Login</Link>
+            </Form.Text>
+          </Stack>
+        </Form>
+      </Column>
+    </>
   );
-};
+}
 
-export default SignupPage;
+const Column = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 350px;
+  margin: auto;
+  text-align: center;
+  padding: 20px;
+`;

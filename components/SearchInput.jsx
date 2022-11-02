@@ -1,4 +1,4 @@
-import { Input } from 'reactstrap';
+import { Form } from 'react-bootstrap';
 import { searchFilterAtom } from '../logic/atoms';
 import { useAtom } from 'jotai';
 
@@ -7,11 +7,17 @@ export default function SearchInput() {
 
   const onSearchSubmit = (e) => {
     if (e.key === 'Enter') {
+      e.preventDefault();
       setSearchFilter(e.target.value);
     }
   };
 
-  // _ _ _ COMPONENT UI _ _ _ _ _ _ _ _ _ _ _ _
-
-  return <Input onKeyDown={onSearchSubmit} />;
+  return (
+    <Form onKeyDown={onSearchSubmit}>
+      {/* <Form.Group className="mb-3" controlId="exampleForm.ControlInput1"> */}
+      {/* <Form.Label>Email address</Form.Label> */}
+      <Form.Control placeholder="Search" />
+      {/* </Form.Group> */}
+    </Form>
+  );
 }
