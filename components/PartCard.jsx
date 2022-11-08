@@ -1,68 +1,98 @@
-import Image from 'next/image';
-import { Card, CardText, CardSubtitle, CardTitle } from 'reactstrap';
-import { useMemo, useState } from 'react';
+// import Image from 'next/image';
+import { Card, Badge, Spinner } from 'react-bootstrap';
 import styled from 'styled-components';
+import { useAtom } from 'jotai';
+import Image from './ImageWithFallback';
+import { sideBarPartNumAtom, sideBarOpenAtom } from '../logic/atoms';
+import useParts from '../fetchers/useParts';
 
-const PartCategory = styled(CardTitle)`
+const removeCategoryFromName = (name, category) => {
+  const categoryWords = category.split(' ');
+  let newName = name;
+  categoryWords.forEach((w) => {
+    const word = w.replace(',', '');
+    const regex = new RegExp(word, 'i');
+    newName = newName.replace(regex, '');
+  });
+  return newName.replace(/[^a-zA-Z0-9\s]/, ''); // get rid of non alpha=numberic at beginning of scentence
+};
+
+export default function PartCard({
+  name,
+  partId,
+  category,
+  onSelect,
+  selected,
+}) {
+  const { data: part, isLoading, error } = useParts(partId);
+  const [sideBarPartId, setSideBarPartId] = useAtom(sideBarPartNumAtom);
+  const [open, setOpen] = useAtom(sideBarOpenAtom);
+
+  const handleAddClick = (e) => {
+    setSideBarPartId(partId);
+    setOpen(true);
+  };
+
+  if (isLoading) return <Spinner animation="border" />;
+  if (error) return <p>error</p>;
+  return (
+    <Card bg={selected ? 'primary' : null} onClick={onSelect}>
+      <Image
+        src={part.thumbnail_url}
+        alt={partId}
+        width={200}
+        height={150}
+        // layout="intrinsic" // you can use "responsive", "fill" or the default "intrinsic"
+        objectFit="contain"
+      />
+
+      {/* <PartCategory selected={selected}>{category}</PartCategory> */}
+      <PartName selected={selected}>
+        {removeCategoryFromName(name, category)}
+      </PartName>
+      <FlexDiv>
+        <PartId selected={selected}>{partId}</PartId>
+        <AddButton pill={true} bg="success" onClick={handleAddClick}>
+          +
+        </AddButton>
+      </FlexDiv>
+
+      {/* {selected && <PartId selected>{JSON.stringify(part)}</PartId>} */}
+    </Card>
+  );
+}
+
+const PartCategory = styled(Card.Subtitle)`
   font-size: x-small;
   font-weight: bold;
   color: ${(props) => (props.selected ? 'White' : 'Black')};
   margin: 0px 2px;
 `;
 
-const PartName = styled(CardTitle)`
+const PartName = styled(Card.Title)`
   font-size: x-small;
   color: ${(props) => (props.selected ? 'White' : 'Black')};
   flex: auto;
+  margin: 0;
 `;
 
-const PartNumber = styled(CardSubtitle)`
+const FlexDiv = styled.div`
+  display: flex;
+  margin: 5px;
+`;
+
+const PartId = styled(Card.Text)`
   font-size: xx-small;
   color: ${(props) => (props.selected ? 'LightGray' : 'Gray')};
-  text-align: right;
   align-self: flex-end;
+  flex: auto;
+  margin: 0;
 `;
 
-const PartCard = ({
-  part,
-  name,
-  partNum,
-  imageUrl,
-  category,
-  onSelect,
-  selected,
-}) => {
-  const removeCategoryFromName = (name, category) => {
-    const categoryWords = category.split(' ');
-    let newName = name;
-    categoryWords.forEach((w) => {
-      const word = w.replace(',', '');
-      const regex = new RegExp(word, 'i');
-      newName = newName.replace(regex, '');
-    });
-    return newName.replace(/[^a-zA-Z0-9\s]/, ''); // get rid of non alpha=numberic at beginning of scentence
-  };
-
-  return (
-    <Card color={selected ? 'primary' : null} onClick={onSelect}>
-      <Image
-        src={imageUrl}
-        alt={partNum}
-        width={200}
-        height={150}
-        // layout="intrinsic" // you can use "responsive", "fill" or the default "intrinsic"
-        objectFit="contain"
-      />
-      <PartCategory selected={selected}>{category}</PartCategory>
-      <PartName selected={selected}>
-        {removeCategoryFromName(name, category)}
-      </PartName>
-      {/* <PartName>{name}</PartName> */}
-      <PartNumber selected={selected}>{partNum}</PartNumber>
-
-      {/* {selected && <PartNumber selected>{JSON.stringify(part)}</PartNumber>} */}
-    </Card>
-  );
-};
-
-export default PartCard;
+const AddButton = styled(Badge)`
+  font-size: xx-small;
+  cursor: pointer;
+  right: 3px;
+  bottom: 3px;
+  position: absolute;
+`;
