@@ -1,18 +1,4 @@
 const OAuth = require('oauth').OAuth;
-import { Blob } from 'buffer';
-import { ref, uploadBytes } from 'firebase/storage';
-import {
-  collection,
-  getDocs,
-  setDoc,
-  writeBatch,
-  doc,
-  serverTimestamp,
-} from 'firebase/firestore';
-import { db, storage } from '../../../logic/firebase';
-var xml2js = require('xml2js');
-const fs = require('fs');
-const csv = require('csv-parser');
 import { readCSV, splitArrayIntoParts, sleep } from '../../../logic/utils';
 
 let parts = null;
@@ -22,9 +8,7 @@ export default async (req, res) => {
 
   // load parts from csv if not loaded
   if (!parts) {
-    parts = await readCSV(
-      process.cwd() + '/public/bricklink_data/parts.csv'
-    ).slice(50);
+    parts = await readCSV(process.cwd() + '/public/bricklink_data/parts.csv');
   }
 
   res.status(200).json(parts);

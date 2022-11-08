@@ -10,9 +10,8 @@ const fetchParts = async (partId) => {
 
   if (res.status !== 200) {
     console.warn(data);
-    throw new Error(data);
+    throw new Error(data).message;
   }
-  console.log(data);
   return data;
 
   // const q = query(collection(db, 'bricklink_list_parts'), limit(500));

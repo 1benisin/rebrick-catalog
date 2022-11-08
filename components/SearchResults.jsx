@@ -14,9 +14,14 @@ export default function SearchResults({}) {
 
   const filteredParts = useMemo(() => {
     const lowercaseFilter = searchFilter.toLowerCase();
-    return parts?.filter((part) => {
-      return part.partName.toLowerCase().includes(lowercaseFilter);
-    });
+    return (
+      parts &&
+      parts
+        .filter((part) => {
+          return part.partName.toLowerCase().includes(lowercaseFilter);
+        })
+        .slice(0, 50)
+    );
   }, [parts, searchFilter]);
 
   if (isLoading) return <Spinner animation="border" />;
@@ -24,7 +29,7 @@ export default function SearchResults({}) {
 
   return (
     <Grid>
-      {filteredParts.slice(50).map((part) => (
+      {filteredParts.map((part) => (
         <PartCard
           onSelect={() => setSelectedPartId(part.partId)}
           selected={selectedPartId == part.partId ? true : false}
