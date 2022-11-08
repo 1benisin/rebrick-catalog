@@ -4,10 +4,10 @@ import { useAtom } from 'jotai';
 import { Spinner } from 'react-bootstrap';
 import PartCard from '../components/PartCard';
 import { searchFilterAtom } from '../logic/atoms';
-import { usePartCatalog } from '../logic/getters';
+import useParts from '../fetchers/useParts';
 
 export default function SearchResults({}) {
-  const { partCatalog, isLoading, error } = usePartCatalog();
+  const { partCatalog, isLoading, error } = useParts();
   const [searchFilter] = useAtom(searchFilterAtom);
 
   const [selectedPartNum, setSelectedPartNum] = useState('');

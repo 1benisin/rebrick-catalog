@@ -44,7 +44,7 @@ export default function PartCard({
         objectFit="contain"
       />
 
-      <PartCategory selected={selected}>{category}</PartCategory>
+      {/* <PartCategory selected={selected}>{category}</PartCategory> */}
       <PartName selected={selected}>
         {removeCategoryFromName(name, category)}
       </PartName>
