@@ -7,7 +7,7 @@ import useColors from '../fetchers/useColors';
 export default function AddPartSidebar() {
   const [partNum] = useAtom(sideBarPartNumAtom);
   const [open, setOpen] = useAtom(sideBarOpenAtom);
-  const { colors, isLoading, error } = useColors(partNum);
+  const { data: colors, isLoading, error } = useColors(partNum);
 
   const toggleSideBar = (e) => {
     setOpen(!open);

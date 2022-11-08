@@ -17,45 +17,43 @@ const removeCategoryFromName = (name, category) => {
 };
 
 export default function PartCard({
-  part,
   name,
-  partNum,
-  imageUrl,
+  partId,
   category,
   onSelect,
   selected,
 }) {
-  const [sideBarPartNum, setSideBarPartNum] = useAtom(sideBarPartNumAtom);
+  const [sideBarPartId, setSideBarPartId] = useAtom(sideBarPartNumAtom);
   const [open, setOpen] = useAtom(sideBarOpenAtom);
 
   const handleAddClick = (e) => {
-    setSideBarPartNum(partNum);
+    setSideBarPartId(partId);
     setOpen(true);
   };
 
   return (
     <Card bg={selected ? 'primary' : null} onClick={onSelect}>
-      <Image
+      {/* <Image
         src={imageUrl}
-        alt={partNum}
+        alt={partId}
         width={200}
         height={150}
         // layout="intrinsic" // you can use "responsive", "fill" or the default "intrinsic"
         objectFit="contain"
-      />
+      /> */}
 
       {/* <PartCategory selected={selected}>{category}</PartCategory> */}
       <PartName selected={selected}>
         {removeCategoryFromName(name, category)}
       </PartName>
       <FlexDiv>
-        <PartNumber selected={selected}>{partNum}</PartNumber>
+        <PartId selected={selected}>{partId}</PartId>
         <AddButton pill={true} bg="success" onClick={handleAddClick}>
           +
         </AddButton>
       </FlexDiv>
 
-      {/* {selected && <PartNumber selected>{JSON.stringify(part)}</PartNumber>} */}
+      {/* {selected && <PartId selected>{JSON.stringify(part)}</PartId>} */}
     </Card>
   );
 }
@@ -79,7 +77,7 @@ const FlexDiv = styled.div`
   margin: 5px;
 `;
 
-const PartNumber = styled(Card.Text)`
+const PartId = styled(Card.Text)`
   font-size: xx-small;
   color: ${(props) => (props.selected ? 'LightGray' : 'Gray')};
   align-self: flex-end;

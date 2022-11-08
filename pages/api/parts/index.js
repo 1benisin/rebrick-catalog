@@ -22,7 +22,9 @@ export default async (req, res) => {
 
   // load parts from csv if not loaded
   if (!parts) {
-    parts = await readCSV(process.cwd() + '/public/bricklink_data/parts.csv');
+    parts = await readCSV(
+      process.cwd() + '/public/bricklink_data/parts.csv'
+    ).slice(50);
   }
 
   res.status(200).json(parts);

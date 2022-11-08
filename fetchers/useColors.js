@@ -1,7 +1,7 @@
 import useSWR from 'swr';
 
 export const fetchColors = async (partId) => {
-  console.log('FETCH - colors');
+  console.log('FETCH - colors', partId);
   const url = partId ? `/api/colors/${partId}` : `/api/colors`;
   const res = await fetch(url);
   const data = await res.json();
@@ -14,7 +14,7 @@ export const fetchColors = async (partId) => {
 };
 
 export default function useColors(partId = null) {
-  const SWRid = partId ? `${partId}Colors` : 'colors';
+  const SWRid = partId ? `${partId}_color` : 'colors';
 
   const { data, error } = useSWR(SWRid, () => fetchColors(partId), {
     revalidateIfStale: false,
@@ -23,7 +23,7 @@ export default function useColors(partId = null) {
   });
 
   return {
-    colors: data,
+    data,
     isLoading: !error && !data,
     error,
   };

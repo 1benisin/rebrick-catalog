@@ -7,33 +7,32 @@ import { searchFilterAtom } from '../logic/atoms';
 import useParts from '../fetchers/useParts';
 
 export default function SearchResults({}) {
-  const { partCatalog, isLoading, error } = useParts();
+  const { data: parts, isLoading, error } = useParts();
   const [searchFilter] = useAtom(searchFilterAtom);
 
-  const [selectedPartNum, setSelectedPartNum] = useState('');
+  const [selectedPartId, setSelectedPartId] = useState('');
 
-  const filteredPartCatalog = useMemo(() => {
+  const filteredParts = useMemo(() => {
     const lowercaseFilter = searchFilter.toLowerCase();
-    return partCatalog?.filter((part) => {
-      return part.name.toLowerCase().includes(lowercaseFilter);
+    return parts?.filter((part) => {
+      return part.partName.toLowerCase().includes(lowercaseFilter);
     });
-  }, [partCatalog, searchFilter]);
+  }, [parts, searchFilter]);
 
   if (isLoading) return <Spinner animation="border" />;
   if (error) return <p>error</p>;
 
   return (
     <Grid>
-      {filteredPartCatalog.map((part) => (
+      {filteredParts.slice(50).map((part) => (
         <PartCard
-          part={part}
-          onSelect={() => setSelectedPartNum(part.partNum)}
-          selected={selectedPartNum == part.partNum ? true : false}
-          key={part.partNum}
-          name={part.name}
-          partNum={part.partNum}
-          imageUrl={part.thumbnailUrl}
-          category={part.category}
+          onSelect={() => setSelectedPartId(part.partId)}
+          selected={selectedPartId == part.partId ? true : false}
+          key={part.partId}
+          name={part.partName}
+          partId={part.partId}
+          // imageUrl={part.thumbnailUrl}
+          category={part.catName}
         ></PartCard>
       ))}
     </Grid>
