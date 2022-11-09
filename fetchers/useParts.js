@@ -10,7 +10,7 @@ const fetchParts = async (partId) => {
 
   if (res.status !== 200) {
     console.warn(data);
-    throw new Error(data).message;
+    throw new Error(data);
   }
   return data;
 
