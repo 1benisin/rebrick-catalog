@@ -2,10 +2,63 @@ import { useState, useEffect, useCallback } from 'react';
 import { mediaDim } from './globalConfig';
 import { detectingAtom } from './atoms';
 import { useAtom } from 'jotai';
-import { sleep } from './utils';
+import { classify, detect } from './modelManager';
 
-const detecting = false;
 const mediaStream = null;
+const imageCapture = null;
+
+// capture to canvas
+export const getDectections = async (videoRef, canvasRef) => {
+  const imgCapture = getImageCapture();
+  const img = await imgCapture.grabFrame();
+  // draw calls
+  const displayCanvas = canvasRef.current;
+  const displayCtx = displayCanvas.getContext('2d');
+  displayCtx.drawImage(
+    img,
+    0,
+    0,
+    img.width,
+    img.height,
+    0,
+    0,
+    displayCanvas.width,
+    displayCanvas.height
+  );
+
+  const imageData = displayCtx.getImageData(
+    0,
+    0,
+    displayCanvas.width,
+    displayCanvas.height
+  );
+
+  // get scaling dimensions
+  // if (!scalar) scalar = img.width / DETECT_DIMENSIONS.width;
+
+  // DETECT
+  const detections = await getDetections(imageData);
+  console.log(detections);
+  return detections;
+  // CLASSIFY
+  // const newDetections = [];
+  // for (const detection of detections) {
+  //   const classificationResults = await classifyFromDetection(detection, img);
+  //   // will return null if cropped detection box overlaps outside of screen
+  //   if (classificationResults)
+  //     newDetections.push({ ...classificationResults, captureTime });
+  // }
+
+  // return newDetections;
+};
+
+export const getImageCapture = async () => {
+  if (imageCapture) return imageCapture;
+
+  const [track] = getMediaStream().getVideoTracks();
+  imageCapture = new ImageCapture(track);
+  return imageCapture;
+};
 
 export const getMediaStream = async () => {
   if (mediaStream) return mediaStream;
@@ -46,20 +99,7 @@ export const getMediaStream = async () => {
 };
 
 export const captureToCanvas = async (videoRef, canvasRef) => {
-  console.log(videoRef.current);
   const canvas = canvasRef.current;
   const ctx1 = canvas.getContext('2d');
   ctx1.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-};
-
-export const start = async () => {
-  detecting = true;
-  do {
-    console.log('detecting');
-    await sleep(1000);
-  } while (detecting);
-};
-
-export const stop = () => {
-  detecting = false;
 };
