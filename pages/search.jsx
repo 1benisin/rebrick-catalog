@@ -3,6 +3,7 @@ import ProtectedRoute from '../components/ProtectedRoute';
 import SearchInput from '../components/SearchInput';
 import SearchResults from '../components/SearchResults';
 import AddPartSidebar from '../components/AddPartSidebar';
+// import '../logic/scrapeBLRelationships';
 
 export default function Search() {
   return (
