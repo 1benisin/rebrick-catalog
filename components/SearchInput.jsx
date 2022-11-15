@@ -1,11 +1,12 @@
 import { Form } from 'react-bootstrap';
-import { searchFilterAtom } from '../logic/atoms';
+import { searchFilterAtom, filteredaPartsAtom } from '../logic/atoms';
 import { useAtom } from 'jotai';
 
 export default function SearchInput() {
   const [_, setSearchFilter] = useAtom(searchFilterAtom);
+  // const [_, setFilteredParts] = useAtom(filteredaPartsAtom);
 
-  const onSearchSubmit = (e) => {
+  const onSearchSubmit = async (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       setSearchFilter(e.target.value);
