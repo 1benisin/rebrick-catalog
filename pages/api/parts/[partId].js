@@ -9,8 +9,8 @@ import {
 import { db } from '../../../logic/firebase';
 import { fetchBricklinkURL } from '../../../logic/utils';
 
-const STALE_TIME = 0;
-// const STALE_TIME = 1000 * 60 * 60 * 24 * 7; // days old
+// const STALE_TIME = 0;
+const STALE_TIME = 1000 * 60 * 60 * 24 * 7; // days old
 
 export default async (req, res) => {
   const { partId } = req.query;
@@ -20,10 +20,12 @@ export default async (req, res) => {
   const docSnap = await getDoc(docRef);
   let partDetails = docSnap.data();
 
-  // if part exists on db or is older than STALE_TIME
+  // is part stale or not have a timestamp
   const isStale =
+    !partDetails?.timestamp?.seconds ||
     Date.now() / 1000 - partDetails.timestamp.seconds > STALE_TIME;
-  if (!isStale) console.log('stale?', isStale);
+
+  // if part EXISTS on db and is not STALE
   if (partDetails && !isStale) {
     res.status(200).json(partDetails);
     return;
@@ -33,6 +35,7 @@ export default async (req, res) => {
   partDetails = await fetchBricklinkURL(
     `https://api.bricklink.com/api/store/v1/items/part/${partId}`
   );
+
   // if part missing on bricklink as well
   if (!partDetails) {
     res.status(500).json('No part on our database or bricklink');
@@ -50,8 +53,7 @@ export default async (req, res) => {
       : '/fallback.webp',
     timestamp: serverTimestamp(),
   };
-  await updateDoc(doc(db, 'part_details', partId), { temp: 'temp' });
+  await setDoc(doc(db, 'part_details', partId), partDetails);
 
-  console.log('partDetails', partDetails);
   res.status(200).json(partDetails);
 };
