@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
 import { Button, Offcanvas, Spinner } from 'react-bootstrap';
-import { sideBarPartNumAtom, sideBarOpenAtom } from '../logic/atoms';
+import styled from 'styled-components';
 import { useAtom } from 'jotai';
+import { sideBarPartNumAtom, sideBarOpenAtom } from '../logic/atoms';
 import useColors from '../fetchers/useColors';
 
 export default function AddPartSidebar() {
@@ -16,12 +17,40 @@ export default function AddPartSidebar() {
   return (
     <div>
       <Offcanvas show={open} placement="end" onHide={toggleSideBar}>
-        <Offcanvas.Header>{`part number:${partNum}`}</Offcanvas.Header>
+        <Offcanvas.Header>{`Known Colors for part ${partNum}`}</Offcanvas.Header>
         <Offcanvas.Body>
-          <strong>This is the Offcanvas body.</strong>
-          {isLoading ? <Spinner /> : <p>{JSON.stringify(colors)}</p>}
+          {isLoading ? (
+            <Spinner />
+          ) : (
+            <ColorColumn>
+              {colors.map((color) => (
+                <ColorRow key={color.color_id}>
+                  <ColorSquare code={`#${color.color_code}`} />
+                  <ColorName>{color.color_name}</ColorName>
+                </ColorRow>
+              ))}
+            </ColorColumn>
+          )}
         </Offcanvas.Body>
       </Offcanvas>
     </div>
   );
 }
+
+const ColorColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+const ColorRow = styled.div`
+  display: flex;
+`;
+const ColorSquare = styled.div`
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  background-color: ${(props) => props.code};
+  border: 1px solid lightgray;
+`;
+const ColorName = styled.div`
+  margin: 0px;
+`;

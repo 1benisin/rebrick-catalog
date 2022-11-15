@@ -1,19 +1,20 @@
 import { Nav, Navbar, NavItem, NavLink } from 'react-bootstrap';
+import styled from 'styled-components';
 import AuthButton from '../components/AuthButton';
 
 function NavigationBar({ children }) {
   return (
     <>
       <header>
-        <Navbar>
+        <NavbarStyled>
           <Navbar.Brand href="/">Rebrick Cataloger</Navbar.Brand>
           <Nav>
-            <Nav.Item>
-              <Nav.Link href="/search/">Search</Nav.Link>
-            </Nav.Item>
-            <AuthButton />
+            {/* <Nav.Item> */}
+            <Nav.Link href="/search/">Search</Nav.Link>
+            {/* </Nav.Item> */}
           </Nav>
-        </Navbar>
+          <AuthButton />
+        </NavbarStyled>
       </header>
       {children}
     </>
@@ -21,3 +22,8 @@ function NavigationBar({ children }) {
 }
 
 export default NavigationBar;
+
+const NavbarStyled = styled(Navbar)`
+  display: flex;
+  justify-content: space-between;
+`;
