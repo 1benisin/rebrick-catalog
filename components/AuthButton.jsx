@@ -13,17 +13,24 @@ export default function AuthButton(props) {
   };
 
   return (
-    <>
-      <Button onClick={handleClick} size="sm" {...props}>
+    <Container>
+      <ButtonStyled onClick={handleClick} size="sm" {...props}>
         {user.uid ? 'Sign Out' : 'Sign In'}
-      </Button>
+      </ButtonStyled>
       <Username>{user.uid ? user.email : null} </Username>
-    </>
+    </Container>
   );
 }
 
+const ButtonStyled = styled(Button)`
+  margin: auto 5px;
+`;
+const Container = styled.div`
+  display: flex;
+`;
+
 const Username = styled.p`
-  padding: 0px 10px;
+  margin: auto;
   font-size: small;
   color: grey;
 `;

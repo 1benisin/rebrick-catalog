@@ -45,10 +45,11 @@ export default function PartCard({
         // layout="intrinsic" // you can use "responsive", "fill" or the default "intrinsic"
         objectFit="contain"
       />
-
-      {/* <PartCategory selected={selected}>{category}</PartCategory> */}
+      <PartCategory>{part.category_id}</PartCategory>
       <PartName selected={selected}>
-        {removeCategoryFromName(name, category)}
+        {/* {JSON.stringify(part)} */}
+        {part.name}
+        {/* {removeCategoryFromName(name, part.catName)} */}
       </PartName>
       <FlexDiv>
         <PartId selected={selected}>{partId}</PartId>
@@ -56,8 +57,6 @@ export default function PartCard({
           +
         </AddButton>
       </FlexDiv>
-
-      {/* {selected && <PartId selected>{JSON.stringify(part)}</PartId>} */}
     </Card>
   );
 }

@@ -1,46 +1,63 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import { useAtom } from 'jotai';
 import { Spinner } from 'react-bootstrap';
 import PartCard from '../components/PartCard';
 import { searchFilterAtom } from '../logic/atoms';
-import useParts from '../fetchers/useParts';
+import useFilteredParts from '../fetchers/useFilteredParts';
+import useRelatedParts from '../fetchers/useRelatedParts';
 
 export default function SearchResults({}) {
-  const { data: parts, isLoading, error } = useParts();
-  const [searchFilter] = useAtom(searchFilterAtom);
-
   const [selectedPartId, setSelectedPartId] = useState('');
+  const [searchFilter, setSearchFilter] = useAtom(searchFilterAtom);
+  const {
+    data: filteredParts,
+    isLoading,
+    error,
+  } = useFilteredParts(searchFilter);
+  const {
+    data: relatedParts,
+    isLoading: relatedPartsLoading,
+    error: relatedPartsError,
+  } = useRelatedParts(selectedPartId);
 
-  const filteredParts = useMemo(() => {
-    const lowercaseFilter = searchFilter.toLowerCase();
-    return (
-      parts &&
-      parts
-        .filter((part) => {
-          return part.partName.toLowerCase().includes(lowercaseFilter);
-        })
-        .slice(0, 50)
-    );
-  }, [parts, searchFilter]);
+  const handleSelectPart = (partId) => {
+    setSearchFilter('');
+    setSelectedPartId(partId);
+  };
 
   if (isLoading) return <Spinner animation="border" />;
   if (error) return <p>error</p>;
 
   return (
-    <Grid>
-      {filteredParts.map((part) => (
-        <PartCard
-          onSelect={() => setSelectedPartId(part.partId)}
-          selected={selectedPartId == part.partId ? true : false}
-          key={part.partId}
-          name={part.partName}
-          partId={part.partId}
-          // imageUrl={part.thumbnailUrl}
-          category={part.catName}
-        ></PartCard>
-      ))}
-    </Grid>
+    <>
+      {relatedPartsLoading ? (
+        <Spinner />
+      ) : (
+        <Grid>
+          {relatedParts.map((id) => (
+            <PartCard
+              onSelect={() => handleSelectPart(id)}
+              selected={selectedPartId == id ? true : false}
+              key={id}
+              partId={id}
+            ></PartCard>
+          ))}
+        </Grid>
+      )}
+      {filteredParts && (
+        <Grid>
+          {filteredParts.map((id) => (
+            <PartCard
+              onSelect={() => handleSelectPart(id)}
+              selected={selectedPartId == id ? true : false}
+              key={id}
+              partId={id}
+            ></PartCard>
+          ))}
+        </Grid>
+      )}
+    </>
   );
 }
 
